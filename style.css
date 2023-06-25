@@ -1,0 +1,67 @@
+body {
+	width: 100%;
+	height: auto;
+	font-family: "Calibri";
+	background-image: url(Main.jpg);
+}
+#weathercontainer h1 {
+	text-align: center;
+	color: white;
+}
+#searchcontainer {
+	
+}
+#searchcontainer input[type=button]{
+	margin-top: 10px;
+	background-color: white;
+	border-radius: 10px;
+	padding: 5px;
+}
+#searchcontainer input[type=button]:hover{
+	color: blue;
+}
+#searchcontainer input[type=text]{
+	margin-top: 10px;
+	border-radius: 10px;
+	padding: 5px;
+}
+#current p {
+	font-size: 24px;
+	text-align: center;
+	justify-content: center;
+	//display: flex;
+	display: grid;
+	//gap: 50px 100px;
+	grid-auto-flow: row;
+	color: white;
+}
+#forecast p {
+	background-color: white;
+	display: grid;
+	gap: 50px 100px;
+	grid-auto-flow: row;
+	text-align: center;
+	font-size: 24px;
+	width: 20%;
+	margin-right: 25px;
+	border-radius: 10px;
+}
+#current h2 {
+	text-align: center;
+	color: white;
+	font-size: 30px;
+}
+#forecast h2 {
+	text-align: center;
+	color: white;
+	font-size: 30px;
+}
+#forecast ul {
+	display: flex;
+	flex-direction: row;
+}
+#temperature {
+	margin-top: 25px;
+	margin-bottom: 25px;
+	font-size: 48px;
+}

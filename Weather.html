@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Weather</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div id="weathercontainer">
+		<h1>Weather Forecast</h1>
+		<div id="searchcontainer">
+			<input type="text" id="zip" placeholder="Enter Zip Code..." required >
+			<input type="button" value="Check Weather" onclick="getWeather()" >
+		</div>
+		<div id="current">
+			<h2>Current Weather</h2>
+			<div id="currentweather"></div>
+		</div>
+		<div id="forecast">
+			<h2>5 day Forecast</h2>
+			<ul id="fiveday"></ul>
+		</div>
+		<script>
+			// Clear current weather
+			
+			function clearCurrentData() {
+				document.getElementById('currentweather').textContent = '';
+			}
+			
+			// Clear forecast list
+			
+			function clearForecast() {
+			  const forecastContainer = document.getElementById('fiveday');
+			  while (forecastContainer.firstChild) {
+				forecastContainer.removeChild(forecastContainer.firstChild);
+			  }
+			}
+			
+			// Dynamically change background image with weather
+			
+			function mainImage(main) {
+			  switch (main) {
+				case 'Clear':
+				  return 'url(ClearSky.jpg)';
+				case 'Clouds':
+				  return 'url(Clouds.jpg)';
+				case 'Rain':
+				  return 'url(Rain.jpg)';
+				case 'Thunderstorm':
+				  return 'url(Thunderstorm.jpg)';
+				case 'Snow':
+				  return 'url(Snow.jpg)';
+				case 'Mist':
+				  return 'url(Mist.jpg)';
+				case 'Drizzle':
+				  return 'url(Drizzle.jpg)';
+				case 'Smoke':
+				  return 'url(Smoke.jpg)';
+				case 'Haze':
+				  return 'url(Haze.jpg)';
+				case 'Dust':
+				  return 'url(Dust.jpg)';
+				case 'Fog':
+				  return 'url(Fog.jpg)';
+				case 'Sand':
+				  return 'url(Sand.jpg)';
+				case 'Ash':
+				  return 'url(Ash.jpg)';
+				case 'Squall':
+				  return 'url(Squall.jpg)';
+				case 'Tornado':
+				  return 'url(Tornado.jpg)';
+			  }
+			}
+			
+			// Get weather data from OpenWeatherMap API
+			
+			function getWeather() {
+				const apiKey = '9b876f0a9ad82f5e780393d83393a6fa';
+				const zipCode = document.getElementById('zip').value;
+
+				clearCurrentData();
+				clearForecast();
+				
+				// Current Weather
+				
+				fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zipCode}&appid=${apiKey}&units=imperial`)
+				.then(response => {
+				  if (!response.ok) {
+					throw new Error('Invalid ZIP code');
+				  }
+				  return response.json();
+				})
+				.then(data => {
+				  const city = data.name;
+				  const country = data.sys.country;
+				  const temperature = Math.round(data.main.temp);
+				  const description = (data.weather[0].description).split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+				  const humidity = data.main.humidity;
+				  const main = data.weather[0].main;
+				  
+				  const body = document.body;
+				  body.style.backgroundImage = mainImage(main);
+				  
+				  const currentWeather = document.createElement('p');
+				  
+				  const locationElement = document.createElement('div');
+				  locationElement.textContent = `${city}, ${country}`;
+				  currentWeather.appendChild(locationElement);
+				  
+				  const temperatureElement = document.createElement('div');
+				  temperatureElement.id = 'temperature';
+				  temperatureElement.textContent = `${temperature}°`;
+				  currentWeather.appendChild(temperatureElement);
+				  
+				  const descriptionElement = document.createElement('div');
+				  descriptionElement.textContent = `${description}`;
+				  currentWeather.appendChild(descriptionElement);
+				  
+				  const humidityElement = document.createElement('div');
+				  humidityElement.textContent = `${humidity}% humidity`;
+				  currentWeather.appendChild(humidityElement);
+				  			  
+				  document.getElementById('currentweather').appendChild(currentWeather);
+				})
+				.catch(error => {
+				  console.log('Error:', error.message);
+				  const errorElement = document.createElement('p');
+				  errorElement.textContent = 'Invalid ZIP code. Please try again.';
+				  document.getElementById('currentweather').appendChild(errorElement);
+				});
+
+				// Fetch 5-day forecast data
+				
+				fetch(`https://api.openweathermap.org/data/2.5/forecast?zip=${zipCode}&appid=${apiKey}&units=imperial`)
+				.then(response => {
+				  if (!response.ok) {
+					throw new Error('Invalid ZIP code');
+				  }
+				  return response.json();
+				})
+				.then(data => {
+				  const forecast = data.list.filter((item, index) => index % 8 === 0);
+
+				  forecast.forEach(item => {
+					const date = new Date(item.dt * 1000).toLocaleDateString('en-US', {weekday: 'short'});
+					const temperature = Math.round(item.main.temp);
+					const description = (item.weather[0].description).split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+					const humidity = item.main.humidity;
+
+					const eachDay = document.createElement('p');
+					eachDay.classList.add('each-day');
+					
+					const dateElement = document.createElement('span');
+					dateElement.textContent = `${date}`;
+					eachDay.appendChild(dateElement);
+					
+					const temperatureElement = document.createElement('span');
+					temperatureElement.textContent = `${temperature}°`;
+					eachDay.appendChild(temperatureElement);
+
+					const descriptionElement = document.createElement('span');
+					descriptionElement.textContent = `${description}`;
+					eachDay.appendChild(descriptionElement);
+
+					const humidityElement = document.createElement('span');
+					humidityElement.textContent = `${humidity}% humidity`;
+					eachDay.appendChild(humidityElement);
+					
+					document.getElementById('fiveday').appendChild(eachDay);
+				  });
+				})
+				.catch(error => {
+				  console.log('Error:', error.message);
+				  const errorElement = document.createElement('p');
+				  errorElement.textContent = 'Invalid ZIP code. Please try again.';
+				});
+			}
+		</script>
+	</div>
+</body>
+</html>
